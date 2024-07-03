@@ -104,6 +104,8 @@ extension OnboardingContentView {
         guard let item = item else { return }
         
         item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
+        item.stackView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: OnboardingContentViewItem.topPadding).isActive = false
+        item.stackView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: OnboardingContentViewItem.bottomPadding).isActive = false
         item.layoutIfNeeded()
         self.layoutIfNeeded()
         
@@ -111,7 +113,9 @@ extension OnboardingContentView {
                        delay: 0,
                        options: .curveEaseOut, animations: {
             item.alpha = 0
-            item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
+            item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -200).isActive = true
+            item.stackView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: OnboardingContentViewItem.topPadding).isActive = true
+            item.stackView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: OnboardingContentViewItem.bottomPadding).isActive = true
             item.layoutIfNeeded()
             self.layoutIfNeeded()
         },
@@ -121,7 +125,9 @@ extension OnboardingContentView {
     }
 
     fileprivate func showItemView(_ item: OnboardingContentViewItem, duration: Double) {
-        item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
+        item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 200).isActive = true
+        item.stackView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: OnboardingContentViewItem.topPadding).isActive = false
+        item.stackView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: OnboardingContentViewItem.bottomPadding).isActive = false
         item.layoutIfNeeded()
         item.alpha = 0
         layoutIfNeeded()
@@ -132,6 +138,8 @@ extension OnboardingContentView {
             item.alpha = 0
             item.alpha = 1
             item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
+            item.stackView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: OnboardingContentViewItem.topPadding).isActive = true
+            item.stackView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: OnboardingContentViewItem.bottomPadding).isActive = true
             item.layoutIfNeeded()
             self.layoutIfNeeded()
         }, completion: nil)
