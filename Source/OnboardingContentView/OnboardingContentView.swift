@@ -121,7 +121,7 @@ extension OnboardingContentView {
     }
 
     fileprivate func showItemView(_ item: OnboardingContentViewItem, duration: Double) {
-        item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 200).isActive = true
+        item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
         item.layoutIfNeeded()
         item.alpha = 0
         layoutIfNeeded()
