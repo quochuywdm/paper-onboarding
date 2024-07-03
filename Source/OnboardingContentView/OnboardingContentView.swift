@@ -114,8 +114,6 @@ extension OnboardingContentView {
                        options: .curveEaseOut, animations: {
             item.alpha = 0
             item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -200).isActive = true
-            item.stackView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: OnboardingContentViewItem.topPadding).isActive = true
-            item.stackView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: OnboardingContentViewItem.bottomPadding).isActive = true
             item.layoutIfNeeded()
             self.layoutIfNeeded()
         },
@@ -138,10 +136,11 @@ extension OnboardingContentView {
             item.alpha = 0
             item.alpha = 1
             item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
-            item.stackView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: OnboardingContentViewItem.topPadding).isActive = true
-            item.stackView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: OnboardingContentViewItem.bottomPadding).isActive = true
             item.layoutIfNeeded()
             self.layoutIfNeeded()
         }, completion: nil)
+        
+        item.stackView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: OnboardingContentViewItem.topPadding).isActive = true
+        item.stackView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: OnboardingContentViewItem.bottomPadding).isActive = true
     }
 }
