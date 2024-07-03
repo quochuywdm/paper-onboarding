@@ -111,7 +111,7 @@ extension OnboardingContentView {
                        delay: 0,
                        options: .curveEaseOut, animations: {
             item.alpha = 0
-            item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -200).isActive = true
+            item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
             item.layoutIfNeeded()
             self.layoutIfNeeded()
         },
