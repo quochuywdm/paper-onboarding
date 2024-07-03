@@ -18,10 +18,9 @@ public struct OnboardingItemInfo {
     public let descriptionColor: UIColor
     public let titleFont: UIFont
     public let descriptionFont: UIFont
-    public let descriptionLabelPadding: CGFloat
-    public let titleLabelPadding: CGFloat
+    public let leftRightPadding: CGFloat
     
-    public init (informationImage: UIImage, title: String, description: String, pageIcon: UIImage, color: UIColor, titleColor: UIColor, descriptionColor: UIColor, titleFont: UIFont, descriptionFont: UIFont, descriptionLabelPadding: CGFloat = 0, titleLabelPadding: CGFloat = 0) {
+    public init (informationImage: UIImage, title: String, description: String, pageIcon: UIImage, color: UIColor, titleColor: UIColor, descriptionColor: UIColor, titleFont: UIFont, descriptionFont: UIFont, leftRightPadding: CGFloat = 20) {
         self.informationImage = informationImage
         self.title = title
         self.description = description
@@ -31,8 +30,7 @@ public struct OnboardingItemInfo {
         self.descriptionColor = descriptionColor
         self.titleFont = titleFont
         self.descriptionFont = descriptionFont
-        self.descriptionLabelPadding = descriptionLabelPadding
-        self.titleLabelPadding = titleLabelPadding
+        self.leftRightPadding = leftRightPadding
     }
 }
 
@@ -130,10 +128,21 @@ extension PaperOnboarding {
         itemsInfo = createItemsInfo()
         translatesAutoresizingMaskIntoConstraints = false
         fillAnimationView = FillAnimationView.animationViewOnView(self, color: backgroundColor(currentIndex))
-        contentView = OnboardingContentView.contentViewOnView(self,
-                                                              delegate: self,
-                                                              itemsCount: itemsCount,
-                                                              bottomConstant: pageViewBottomConstant * -1 - pageViewSelectedRadius)
+        
+        let contentView = OnboardingContentView(itemsCount: itemsCount, delegate: self)
+        self.contentView = contentView
+        contentView.backgroundColor = .clear
+        self.addSubview(contentView)
+        contentView.frame = self.bounds
+        
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            contentView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
+            contentView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
+            contentView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+            contentView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -80),
+        ])
+                               
         pageView = createPageView()
         gestureControl = GestureControl(view: self, delegate: self)
 
@@ -205,7 +214,7 @@ extension PaperOnboarding {
 
 extension PaperOnboarding: GestureControlDelegate {
 
-    func gestureControlDidSwipe(_ direction: UISwipeGestureRecognizer.Direction) {
+    public func gestureControlDidSwipe(_ direction: UISwipeGestureRecognizer.Direction) {
         switch direction {
         case UISwipeGestureRecognizer.Direction.right:
             currentIndex(currentIndex - 1, animated: true)

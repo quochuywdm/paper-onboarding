@@ -10,61 +10,51 @@ import UIKit
 
 open class OnboardingContentViewItem: UIView {
 
-    public var descriptionBottomConstraint: NSLayoutConstraint?
-    public var titleCenterConstraint: NSLayoutConstraint?
-    public var descriptionCenterConstraint: NSLayoutConstraint?
-    public var informationImageWidthConstraint: NSLayoutConstraint?
-    public var informationImageHeightConstraint: NSLayoutConstraint?
-    
     open var imageView: UIImageView?
     open var titleLabel: UILabel?
     open var descriptionLabel: UILabel?
-
-    init(titlePadding: CGFloat, descriptionPadding: CGFloat) {
+    
+    var stackView: UIStackView!
+    
+    public static let topPadding: CGFloat = 50
+    public static let bottomPadding: CGFloat = 20
+    public static let leftRightPadding: CGFloat = 20
+    
+    init() {
         super.init(frame: .zero)
-        commonInit(titlePadding: titlePadding, descriptionPadding: descriptionPadding)
+        commonInit()
     }
 
     public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
+    
+    /// Common init
+    func commonInit() {
+        stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 20
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OnboardingContentViewItem.leftRightPadding),
+            stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -OnboardingContentViewItem.leftRightPadding),
+            stackView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: OnboardingContentViewItem.topPadding),
+            stackView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: OnboardingContentViewItem.bottomPadding),
+            stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+        ])
+        
+        
+        imageView = createImage()
+        titleLabel = createTitleLabel()
+        descriptionLabel = createDescriptionLabel()
 
-// MARK: public
-
-extension OnboardingContentViewItem {
-
-    class func itemOnView(_ view: UIView, titlePadding: CGFloat, descriptionPadding: CGFloat) -> OnboardingContentViewItem {
-        let item = Init(OnboardingContentViewItem(titlePadding: titlePadding, descriptionPadding: descriptionPadding)) {
-            $0.backgroundColor = .clear
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        if let imageView = imageView, let titleLabel = titleLabel, let descriptionLabel = descriptionLabel {
+            stackView.addArrangedSubview(imageView)
+            stackView.addArrangedSubview(titleLabel)
+            stackView.addArrangedSubview(descriptionLabel)
         }
-
-        view.addSubview(item)
-
-        // add constraints
-        item >>>- {
-            $0.attribute = .height
-            $0.constant = 10000
-            $0.relation = .lessThanOrEqual
-            return
-        }
-
-        for attribute in [NSLayoutConstraint.Attribute.leading, NSLayoutConstraint.Attribute.trailing] {
-            (view, item) >>>- {
-                $0.attribute = attribute
-                return
-            }
-        }
-
-        for attribute in [NSLayoutConstraint.Attribute.centerX, NSLayoutConstraint.Attribute.centerY] {
-            (view, item) >>>- {
-                $0.attribute = attribute
-                return
-            }
-        }
-
-        return item
     }
 }
 
@@ -72,122 +62,28 @@ extension OnboardingContentViewItem {
 
 private extension OnboardingContentViewItem {
 
-    func commonInit(titlePadding: CGFloat, descriptionPadding: CGFloat) {
-
-        let titleLabel = createTitleLabel(self, padding: titlePadding)
-        let descriptionLabel = createDescriptionLabel(self, padding: descriptionPadding)
-        let imageView = createImage(self)
-
-        // added constraints
-        titleCenterConstraint = (self, titleLabel, imageView) >>>- {
-            $0.attribute = .top
-            $0.secondAttribute = .bottom
-            $0.constant = 50
-            return
-        }
-        descriptionCenterConstraint = (self, descriptionLabel, titleLabel) >>>- {
-            $0.attribute = .top
-            $0.secondAttribute = .bottom
-            $0.constant = 10
-            return
-        }
-
-        self.titleLabel = titleLabel
-        self.descriptionLabel = descriptionLabel
-        self.imageView = imageView
-    }
-
-    func createTitleLabel(_ onView: UIView, padding: CGFloat) -> UILabel {
-        let label = Init(createLabel()) {
-            $0.font = UIFont(name: "Nunito-Bold", size: 36)
-            $0.numberOfLines = 0
-        }
-        onView.addSubview(label)
-
-        // add constraints
-        label >>>- {
-            $0.attribute = .height
-            $0.constant = 10000
-            $0.relation = .lessThanOrEqual
-            return
-        }
-
-        for (attribute, constant) in [
-            (NSLayoutConstraint.Attribute.leading, padding),
-            (NSLayoutConstraint.Attribute.trailing, -padding)
-            ] {
-            (onView, label) >>>- {
-                $0.attribute = attribute
-                $0.constant = constant
-                return
-            }
-        }
-        
+    func createTitleLabel() -> UILabel {
+        let label = UILabel()
+        label.font = UIFont(name: "Nunito-Bold", size: 36)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.textColor = .white
         return label
     }
 
-    func createDescriptionLabel(_ onView: UIView, padding: CGFloat) -> UILabel {
-        let label = Init(createLabel()) {
-            $0.font = UIFont(name: "OpenSans-Regular", size: 14)
-            $0.numberOfLines = 0
-        }
-        onView.addSubview(label)
-
-        // add constraints
-        label >>>- {
-            $0.attribute = .height
-            $0.constant = 10000
-            $0.relation = .lessThanOrEqual
-            return
-        }
-
-        for (attribute, constant) in [(NSLayoutConstraint.Attribute.leading, padding), (NSLayoutConstraint.Attribute.trailing, -padding)] {
-            (onView, label) >>>- {
-                $0.attribute = attribute
-                $0.constant = constant
-                return
-            }
-        }
-
-        (onView, label) >>>- { $0.attribute = .centerX; return }
-        descriptionBottomConstraint = (onView, label) >>>- { $0.attribute = .bottom; return }
-
+    func createDescriptionLabel() -> UILabel {
+        let label = UILabel()
+        label.font = UIFont(name: "OpenSans-Regular", size: 14)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.textColor = .white
         return label
     }
 
-    func createLabel() -> UILabel {
-        return Init(UILabel(frame: CGRect.zero)) {
-            $0.backgroundColor = .clear
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.textAlignment = .center
-            $0.textColor = .white
-        }
-    }
-
-    func createImage(_ onView: UIView) -> UIImageView {
-        let imageView = Init(UIImageView(frame: CGRect.zero)) {
-            $0.contentMode = .scaleAspectFit
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-
-        onView.addSubview(imageView)
-
-        // add constratints
-        informationImageWidthConstraint = imageView >>>- {
-            $0.attribute = NSLayoutConstraint.Attribute.width
-            $0.constant = 188
-            return
-        }
-        
-        informationImageHeightConstraint = imageView >>>- {
-            $0.attribute = NSLayoutConstraint.Attribute.height
-            $0.constant = 188
-            return
-        }
-
-        for attribute in [NSLayoutConstraint.Attribute.centerX, NSLayoutConstraint.Attribute.top] {
-            (onView, imageView) >>>- { $0.attribute = attribute; return }
-        }
+    func createImage() -> UIImageView {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
 
         return imageView
     }
