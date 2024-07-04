@@ -103,15 +103,20 @@ extension OnboardingContentView {
     fileprivate func hideItemView(_ item: OnboardingContentViewItem?, duration: Double) {
         guard let item = item else { return }
         
-        item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
         item.layoutIfNeeded()
         self.layoutIfNeeded()
+        
+        let image = item.stackView.takeScreenshot()
+        item.stackView.alpha = 0
+        let imageView = UIImageView(image: image)
+        item.addSubview(imageView)
+        imageView.frame = item.stackView.frame
         
         UIView.animate(withDuration: duration,
                        delay: 0,
                        options: .curveEaseOut, animations: {
             item.alpha = 0
-            item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -0).isActive = true
+            imageView.frame = CGRect(x: imageView.frame.origin.x, y: imageView.frame.origin.y - 200, width: imageView.frame.width, height: imageView.frame.height)
             item.layoutIfNeeded()
             self.layoutIfNeeded()
         },
@@ -121,7 +126,6 @@ extension OnboardingContentView {
     }
 
     fileprivate func showItemView(_ item: OnboardingContentViewItem, duration: Double) {
-        item.stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
         item.layoutIfNeeded()
         item.alpha = 0
         layoutIfNeeded()
@@ -135,6 +139,49 @@ extension OnboardingContentView {
             item.layoutIfNeeded()
             self.layoutIfNeeded()
         }, completion: nil)
-        
     }
+}
+
+
+
+
+extension UIView {
+func takeScreenshot() -> UIImage {
+    
+    // Begin context
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, UIScreen.main.scale)
+    defer { UIGraphicsEndImageContext() }
+    
+    // Draw view in that context
+    drawHierarchy(in: self.bounds, afterScreenUpdates: true)
+    
+    // And finally, get image
+    let image = UIGraphicsGetImageFromCurrentImageContext()
+    
+    if (image != nil)
+    {
+        return image!
+    }
+    return UIImage()
+}
+
+func takeScreenShotTransparent() -> UIImage? {
+    
+    let size = CGSize(width: frame.size.width, height: frame.size.height)
+    let rect = CGRect.init(origin: .init(x: 0, y: 0), size: frame.size)
+    
+    UIGraphicsBeginImageContext(size)
+    drawHierarchy(in: rect, afterScreenUpdates: true)
+    
+    let image = UIGraphicsGetImageFromCurrentImageContext()
+    
+    UIGraphicsEndImageContext()
+    
+    guard let imageData = image?.pngData() else {
+        return nil
+    }
+    
+    return UIImage.init(data: imageData)
+}
+
 }
